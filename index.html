@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>faiteundon.net</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;}
+body{background:#f5f6fa;scroll-behavior:smooth;overflow-x:hidden;}
+
+/* Menu fixe */
+nav{
+position:fixed;width:100%;top:0;left:0;z-index:100;
+background:rgba(0,0,0,0.6);backdrop-filter:blur(5px);
+display:flex;justify-content:center;padding:15px;transition:0.3s;}
+nav.scrolled{background:rgba(0,0,0,0.9);}
+nav a{color:white;margin:0 15px;text-decoration:none;font-weight:bold;font-size:16px;transition:0.3s;}
+nav a:hover{color:#ff4b2b;}
+
+/* Slider full screen */
+.slider{position:relative;width:100%;height:70vh;overflow:hidden;}
+.slides img{position:absolute;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s ease, transform 10s ease;}
+.slides img.active{opacity:1;transform:scale(1.05);}
+.slider-text{
+position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+color:white;text-align:center;z-index:2;animation:fadeInText 1.5s ease forwards;padding:0 10px;}
+.slider-text h1{font-size:36px;text-shadow:2px 2px 10px rgba(0,0,0,0.7);}
+.slider-text p{font-size:18px;margin:10px 0;text-shadow:1px 1px 8px rgba(0,0,0,0.7);}
+.slider-text .don-btn{margin-top:15px;background:#ff4b2b;padding:12px 25px;border-radius:50px;font-weight:bold;font-size:18px;cursor:pointer;animation:pulse 2s infinite;border:none;transition:0.3s;}
+.slider-text .don-btn:hover{background:#ff3a1a;transform:scale(1.05);}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+@keyframes fadeInText{from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);}}
+
+/* Sections */
+section{padding:60px 15px;max-width:1200px;margin:0 auto;}
+section h2{text-align:center;font-size:28px;margin-bottom:30px;color:#333;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;opacity:0;transform:translateY(20px);transition:0.8s ease;}
+.card{background:white;padding:15px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.1);text-align:center;transition:0.8s ease;}
+.card img{width:100%;height:150px;object-fit:cover;border-radius:12px;margin-bottom:12px;transition:transform 0.3s, box-shadow 0.3s;}
+.card:hover img{transform:scale(1.05);box-shadow:0 8px 20px rgba(0,0,0,0.2);}
+.card p{line-height:1.4;color:#555;font-size:14px;}
+
+/* Modal */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);justify-content:center;align-items:center;padding:15px;animation:fadeIn 0.5s;}
+.modal-content{background:white;padding:25px;border-radius:15px;max-width:480px;width:100%;box-shadow:0 10px 25px rgba(0,0,0,0.3);position:relative;animation:scaleUp 0.5s;}
+.close{position:absolute;top:10px;right:15px;font-size:26px;cursor:pointer;color:#333;}
+form input,form select,form textarea{width:100%;padding:10px;margin:8px 0;border:1px solid #ddd;border-radius:8px;font-size:14px;}
+form button{background:#ff4b2b;color:white;padding:12px;border:none;border-radius:50px;cursor:pointer;font-weight:bold;width:100%;font-size:16px;transition:0.3s;}
+form button:hover{background:#ff3a1a;transform:scale(1.05);}
+
+/* Choix paiement */
+.payment-choice{display:flex;justify-content:space-around;margin:12px 0;}
+.payment-choice button{padding:10px 15px;border:none;border-radius:50px;cursor:pointer;font-weight:bold;transition:0.3s;font-size:14px;}
+.payment-choice button.active{background:#ff4b2b;color:white;}
+.payment-choice button:hover{background:#ff3a1a;color:white;}
+
+/* Footer */
+.footer{background:#000;color:white;text-align:center;padding:20px;font-size:13px;margin-top:30px;}
+
+/* Responsive slider text */
+@media(max-width:768px){
+.slider-text h1{font-size:26px;}
+.slider-text p{font-size:16px;}
+.slider-text .don-btn{font-size:16px;padding:10px 20px;}
+}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes scaleUp{from{transform:scale(0.8);}to{transform:scale(1);}}
+</style>
+
+<!-- EmailJS -->
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+(function(){emailjs.init("TON_USER_ID");})(); // remplace TON_USER_ID
+</script>
+
+</head>
+<body>
+
+<!-- Menu -->
+<nav id="navbar">
+<a href="#impact">Impact</a>
+<a href="#galerie">Galerie</a>
+<a href="#temoignages">Témoignages</a>
+<a href="#" onclick="openModal()">Faire un don</a>
+</nav>
+
+<!-- Slider -->
+<div class="slider" id="slider">
+<div class="slides" id="slides">
+<img src="https://www.rspca.org.uk/documents/1494939/31276038/1213858-vet-cat_3x2.jpg" class="active">
+<img src="https://www.ballarat.vic.gov.au/sites/default/files/styles/content_header_large_1000_x_640/public/page/field_image/2025-05/Our%20Ballarat%20Magazine%20Animal%20Shelter%20Meda%20Design%204-9-24%20LR%20Image-2.jpg.webp">
+<img src="https://www.animalhumanesociety.org/sites/default/files/styles/crop_16_9_960x540/public/media/image/2021-08/volunteer-holding-orange-tabby-kitten.jpg?h=56d0ca2e&itok=nI_RX-MB">
+</div>
+<div class="slider-text" id="sliderText">
+<h1>Sauvez des vies aujourd'hui</h1>
+<p>Chaque don apporte nourriture, soins et refuge à nos animaux abandonnés</p>
+<button class="don-btn" onclick="openModal()">Faire un don</button>
+</div>
+</div>
+
+<!-- Sections -->
+<section id="impact">
+<h2>Pourquoi donner</h2>
+<div class="cards">
+<div class="card"><img src="https://images.wagwalkingweb.com/media/daily_wag/blog_articles/hero/1651153661.2751184/a-day-in-the-life-of-an-animal-shelter-volunteer.png"><p>Nourriture quotidienne pour chiens et chats abandonnés</p></div>
+<div class="card"><img src="https://austin.widen.net/content/52e84cd1-c9ec-47c7-973a-53478a47e4eb/web/Animal%20Services%20-%20Web_aas-deptbanner-1440px-optimized.png?crop=yes&h=600&itok=GBdokBtm&w=1920"><p>Soins vétérinaires et sauvetage des animaux malades</p></div>
+<div class="card"><img src="https://www.battersea.org.uk/sites/default/files/styles/webp/public/2025-04/A%20volunteer%20stroking%20a%20cat%20in%20the%20Cattery%20-%20mob.jpg.webp"><p>Refuges sécurisés et accompagnement des animaux</p></div>
+</div>
+</section>
+
+<section id="galerie">
+<h2>Animaux sauvés</h2>
+<div class="cards">
+<div class="card"><img src="https://bestfriends.org/sites/default/files/styles/story_desktop_1920x1230_/public/story_images/emergency_WeberCountyShelterZeusKathyVolunteer9358sak.jpg?h=bdf4b572&itok=8aXJJGKo"><p>Chien adopté avec succès</p></div>
+<div class="card"><img src="https://images.squarespace-cdn.com/content/v1/66216573c860e87c8bbad689/375dba45-86ef-4a70-bb11-55365a90e44b/434597281_10231713937462263_6926087353019963447_n.jpg"><p>Chat sauvé et soigné</p></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1626957382071-2d3d102a6223?auto=format&fit=crop&w=500&q=80"><p>Refuge sécurisé pour plusieurs animaux</p></div>
+</div>
+</section>
+
+<section id="temoignages">
+<h2>Témoignages</h2>
+<div class="cards">
+<div class="card"><p>“Grâce à cette association, j’ai pu sauver mon chat malade.” – Julie, Paris</p></div>
+<div class="card"><p>“Je recommande fortement, chaque don compte !” – Marc, Lyon</p></div>
+<div class="card"><p>“Une équipe sérieuse et passionnée par les animaux.” – Sophie, Marseille</p></div>
+</div>
+</section>
+
+<!-- Modal Formulaire -->
+<div class="modal" id="donModal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+
+    <div class="payment-choice">
+      <button id="paypalBtn" class="active" onclick="choosePayment('paypal')">PayPal</button>
+      <button id="transcashBtn" onclick="choosePayment('transcash')">TransCash</button>
+    </div>
+
+    <form id="donForm" onsubmit="payer(event)">
+      <h3>Formulaire de don</h3>
+
+      <input type="text" name="nom" placeholder="Nom" required>
+      <input type="text" name="prenom" placeholder="Prénom" required>
+      <input type="text" name="ville" placeholder="Ville" required>
+
+      <select name="motif" required>
+        <option value="">Motif du don</option>
+        <option>Nourriture</option>
+        <option>Soins vétérinaires</option>
+        <option>Refuge</option>
+      </select>
+
+      <textarea name="message" placeholder="Un petit mot pour encourager l'association" rows="4"></textarea>
+
+      <p>💰 Montant libre (€)</p>
+      <input type="number" id="montant" name="montant" placeholder="Montant en €" required min="1">
+
+      <div id="transcashInstructions" style="display:none;background:#f9f9f9;padding:10px;margin:10px 0;border-radius:6px;color:#333;font-size:14px;">
+        <p>Pour effectuer votre don via TransCash :</p>
+        <ol>
+          <li>Achetez une carte TransCash (physique ou virtuelle).</li>
+          <li>Copiez le code de votre carte et entrez-le ci-dessous.</li>
+          <li>Le montant doit correspondre à celui saisi dans le formulaire.</li>
+          <li>Nous confirmerons votre don par email après réception du code.</li>
+        </ol>
+        <input type="text" name="transcashCode" placeholder="Code TransCash" style="width:100%;padding:10px;margin-top:8px;border:1px solid #ddd;border-radius:6px;">
+        <p>Envoyez le code et le formulaire rempli à : <b>faiteundon.net@gmail.com</b></p>
+      </div>
+
+      <button type="submit">Valider le don</button>
+    </form>
+  </div>
+</div>
+
+<div class="footer">
+Paiement sécurisé via PayPal ou TransCash — faiteundon.net@gmail.com | Tous droits réservés France
+</div>
+
+<script>
+// Slider auto + swipe
+let slides = document.querySelectorAll(".slides img");
+let currentIndex = 0;
+function showSlide(i){slides.forEach((s,j)=>s.classList.toggle("active",i===j));}
+function nextSlide(){currentIndex=(currentIndex+1)%slides.length; showSlide(currentIndex);}
+setInterval(nextSlide,6000);
+
+// Swipe mobile
+let startX = 0;
+let sliderDiv = document.getElementById("slider");
+sliderDiv.addEventListener("touchstart",e=>{startX=e.touches[0].clientX;});
+sliderDiv.addEventListener("touchend",e=>{
+  let diff = e.changedTouches[0].clientX - startX;
+  if(diff>50){currentIndex=(currentIndex-1+slides.length)%slides.length; showSlide(currentIndex);}
+  if(diff<-50){currentIndex=(currentIndex+1)%slides.length; showSlide(currentIndex);}
+});
+
+// Modal
+const modal = document.getElementById("donModal");
+const donBtnSlider = document.querySelector(".slider-text .don-btn");
+const sliderText = document.getElementById("sliderText");
+function openModal(){
+    modal.style.display="flex";
+    donBtnSlider.style.display="none";
+    sliderText.style.display="none";
+}
+function closeModal(){
+    modal.style.display="none";
+    donBtnSlider.style.display="inline-block";
+    sliderText.style.display="block";
+}
+window.onclick=function(e){if(e.target==modal) closeModal();}
+
+// Scroll menu
+window.addEventListener("scroll",()=>{
+document.getElementById("navbar").classList.toggle("scrolled",window.scrollY>50);
+});
+
+// Cards reveal
+function revealOnScroll(){
+let cards=document.querySelectorAll('.cards');
+let windowHeight=window.innerHeight;
+cards.forEach(card=>{
+let top=card.getBoundingClientRect().top;
+if(top<windowHeight-100){card.style.opacity='1'; card.style.transform='translateY(0)';}
+});
+}
+window.addEventListener('scroll',revealOnScroll);
+revealOnScroll();
+
+// Payment choice
+let paymentMethod = 'paypal';
+function choosePayment(method){
+  paymentMethod = method;
+  document.getElementById('paypalBtn').classList.toggle('active', method==='paypal');
+  document.getElementById('transcashBtn').classList.toggle('active', method==='transcash');
+  document.getElementById('transcashInstructions').style.display = (method==='transcash') ? 'block':'none';
+}
+
+// Payer avec EmailJS
+function payer(e){
+  e.preventDefault();
+  let form=document.getElementById("donForm");
+  let montant = document.getElementById("montant").value;
+  if(montant<=0){alert("Veuillez saisir un montant valide."); return;}
+
+  let data={
+    nom: form.nom.value,
+    prenom: form.prenom.value,
+    ville: form.ville.value,
+    motif: form.motif.value,
+    message: form.message.value,
+    montant: montant,
+    transcashCode: form.transcashCode ? form.transcashCode.value : "N/A"
+  };
+
+  if(paymentMethod==='paypal'){
+    alert("Merci ! Vous allez être redirigé vers PayPal.");
+    emailjs.send("TON_SERVICE_ID","TON_TEMPLATE_ID",data).then(()=>console.log("Email PayPal envoyé")).catch(err=>console.error(err));
+    let paypal="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=faiteundon.net@gmail.com&currency_code=EUR&amount="+montant;
+    window.location.href=paypal;
+  } else {
+    alert("Merci ! Suivez les instructions TransCash et envoyez le code à notre email.");
+    emailjs.send("TON_SERVICE_ID","TON_TEMPLATE_ID",data).then(()=>console.log("Email TransCash envoyé")).catch(err=>console.error(err));
+  }
+  form.reset(); closeModal();
+}
+</script>
+</body>
+</html>
